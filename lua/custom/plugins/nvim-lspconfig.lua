@@ -135,6 +135,7 @@ return {
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        csharp_ls = {},
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
@@ -182,6 +183,19 @@ return {
 
       require('mason-lspconfig').setup {
         handlers = {
+          ["csharp_ls"] = function()
+            local config = {
+              handlers = {
+                ["textDocument/definition"] = require('csharpls_extended').handler,
+                ["textDocument/typeDefinition"] = require('csharpls_extended').handler,
+              },
+              on_attach = function(client, bufnr)
+                vim.keymap.set('n', 'gd', function() require('csharpls_extended').lsp_definitions(); end,
+                  { noremap = true, desc = "go to definition", buffer = true })
+              end
+            }
+            require("lspconfig").csharp_ls.setup(config)
+          end,
           function(server_name)
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
