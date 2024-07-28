@@ -1,7 +1,8 @@
 return {
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
-    event = 'VimEnter',
+    lazy = true,
+    keys = { '<leader>ff', '<leader>/' },
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',

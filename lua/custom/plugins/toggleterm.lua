@@ -4,8 +4,8 @@ return {
     version = "*",
     config = function()
       require("toggleterm").setup {
-        open_mapping = [[<c-t>]],
-        direction = 'horizontal',
+        open_mapping = [[<a-`>]],
+        direction = 'float',
         float_opts = {
           border = 'curved'
         }

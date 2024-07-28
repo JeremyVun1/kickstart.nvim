@@ -1,10 +1,10 @@
 return {
   { -- Autoformat
     'stevearc/conform.nvim',
-    lazy = false,
+    lazy = true,
     keys = {
       {
-        '<leader>cF',
+        '<leader>=',
         function()
           require('conform').format { async = true, lsp_fallback = true }
         end,
@@ -15,6 +15,10 @@ return {
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
+        if not vim.g.format_on_save then
+          return
+        end
+
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
@@ -25,14 +29,14 @@ return {
         }
       end,
       formatters_by_ft = {
-        lua = { 'staylua' },
-        cs = { 'csharpier' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        lua = { 'stylua' },
+        c_sharp = { 'csharpier' },
+        typescript = { 'biome' },
+        json = { 'biome' },
+        javascript = {'biome' },
+        xml = { 'xmlformatter' },
+        python = { 'ruff', },
+        go = { 'goimports' },
       },
     },
   },

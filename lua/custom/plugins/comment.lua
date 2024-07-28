@@ -1,3 +1,8 @@
 return {
-  { 'numToStr/Comment.nvim', opts = {} },
+  {
+    'numToStr/Comment.nvim',
+    lazy = true,
+    event = { 'BufReadPost', 'BufNewFile' },
+    opts = {},
+  },
 }

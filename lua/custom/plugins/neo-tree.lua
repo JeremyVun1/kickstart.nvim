@@ -3,38 +3,7 @@ return {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v3.x',
     cmd = 'Neotree',
-    keys = {
-      {
-        '<leader>fe',
-        function()
-          require('neo-tree.command').execute { toggle = true, dir = vim.fn.getcwd() }
-        end,
-        desc = 'Explorer NeoTree (Root Dir)',
-      },
-      {
-        '<leader>fE',
-        function()
-          require('neo-tree.command').execute { toggle = true, dir = vim.uv.cwd() }
-        end,
-        desc = 'Explorer NeoTree (cwd)',
-      },
-      { '<leader>e', '<leader>fe', desc = 'Explorer NeoTree (Root Dir)', remap = true },
-      { '<leader>E', '<leader>fE', desc = 'Explorer NeoTree (cwd)', remap = true },
-      {
-        '<leader>ge',
-        function()
-          require('neo-tree.command').execute { source = 'git_status', toggle = true }
-        end,
-        desc = 'Git Explorer',
-      },
-      {
-        '<leader>be',
-        function()
-          require('neo-tree.command').execute { source = 'buffers', toggle = true }
-        end,
-        desc = 'Buffer Explorer',
-      },
-    },
+    lazy = false,
     deactivate = function()
       vim.cmd [[Neotree close]]
     end,
@@ -109,8 +78,8 @@ return {
             local resp = client.request_sync('workspace/willRenameFiles', {
               files = {
                 {
-                  oldUri = vim.uri_from_fname(from),
-                  newUri = vim.uri_from_fname(to),
+                  oldUri = vim.uri_from_fname(data.source),
+                  newUri = vim.uri_from_fname(data.destination),
                 },
               },
             }, 1000, 0)
@@ -127,7 +96,9 @@ return {
         { event = events.FILE_MOVED, handler = on_move },
         { event = events.FILE_RENAMED, handler = on_move },
       })
+
       require('neo-tree').setup(opts)
+
       vim.api.nvim_create_autocmd('TermClose', {
         pattern = '*lazygit',
         callback = function()

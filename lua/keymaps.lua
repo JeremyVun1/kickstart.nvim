@@ -1,80 +1,74 @@
--- Set highlight on search, but clear on pressing <Esc> in normal mode
-vim.opt.hlsearch = true
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+local function map(modes, key, action, desc)
+  vim.keymap.set(modes, key, action, desc)
+end
 
--- Diagnostic keymaps
-vim.keymap.set('n', 'k', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', 'l', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+-- [[ LSP Keymaps ]]
+map('n','l', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic' })
+map('n','k', vim.diagnostic.goto_prev, { desc = 'Go to prev diagnostic' })
+map('n','<leader>t', vim.diagnostic.open_float, { desc = 'Show diagnostics' })
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- [[Buffer keymaps]]
-vim.keymap.set('n', '<leader>`', '<cmd>e #<cr>', { desc = 'Switch to Other Buffer' })
-vim.keymap.set('n', '<leader>bd', function()
+-- [[ Buffer keymaps ]]
+map('n','<leader>`', '<cmd>e #<cr>', { desc = 'switch to last buffer' })
+map('n','<leader>bd', function()
   local bd = require('mini.bufremove').delete
   if vim.bo.modified then
     local choice = vim.fn.confirm(('Save changes to %q?'):format(vim.fn.bufname()), '&Yes\n&No\n&Cancel')
-    if choice == 1 then -- Yes
+    if choice == 1 then
       vim.cmd.write()
       bd(0)
-    elseif choice == 2 then -- No
+    elseif choice == 2 then
       bd(0, true)
     end
   else
     bd(0)
   end
-end)
+end, { desc = 'Close buffer' })
 
--- [[Nav keymaps]]
-vim.keymap.set('n', '<PageUp>', '<PageUp>zz')
-vim.keymap.set('n', '<PageDown>', '<PageDown>zz')
-vim.keymap.set('n', 'n', 'nzzzV')
-vim.keymap.set('n', 'N', 'NzzzV')
+map('n', '<leader>wd', ':q<CR>', { desc = 'Close window' })
 
--- [[Text manipulation keymaps]]
-vim.keymap.set('n', '<leader>sr', ':%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>')
-vim.keymap.set('n', '<leader>sw', '/<C-r><C-w><CR>')
+-- [[ Terminal keymaps ]]
+map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
-vim.keymap.set('x', 'p', '"_dP"')
-vim.keymap.set('n', 'd', '"_d')
-vim.keymap.set('v', 'd', '"_d')
-vim.keymap.set('n', '<c-a>', 'ggVG')
-vim.keymap.set('v', '<', '<gv')
-vim.keymap.set('v', '>', '>gv')
+-- [[ Nav keymaps ]]
+map('n','<PageUp>', '<PageUp>zz')
+map('n','<PageDown>', '<PageDown>zz')
+map('n','n', 'nzzzV')
+map('n','N', 'NzzzV')
 
-vim.keymap.set('v', '<leader>=', vim.lsp.buf.format)
+map('n','<leader><Left>', '<C-w><C-h>', { desc = 'Move focus left'})
+map('n','<leader><Right>', '<C-w><C-l>', { desc = 'Move focus right'})
+map('n','<leader><Up>', '<C-w><C-k>', { desc = 'Move focus up'})
+map('n','<leader><Down>', '<C-w><C-j>', { desc = 'Move focus down'})
 
-vim.keymap.set('n', '<S-CR>', function()
-  print 'hello'
-end)
+-- Global marks
+map('n','ma', 'mA', { desc = 'set Mark A' })
+map('n','`a', '`A', { desc = 'goto Mark A' })
+map('n','mb', 'mB', { desc = 'set Mark B' })
+map('n','`b', '`B', { desc = 'goto Mark B' })
+map('n','mc', 'mC', { desc = 'set Mark C' })
+map('n','`c', '`C', { desc = 'goto Mark C' })
+map('n','md', 'mD', { desc = 'set Mark D' })
+map('n','`d', '`D', { desc = 'goto Mark D' })
 
--- [[ Basic Autocommands ]]
---  See `:help lua-guide-autocommands`
+-- [[ Text manipulation keymaps ]]
+map('n','<leader>sr', ':%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>', { desc = 'Search and replace word under cursor in current buffer' })
+map('n','<leader>sw', '/<C-r><C-w><CR>', { desc = 'search word under cursor in current buffer'})
 
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
-vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-})
+map('x', 'p', '"_dP"', { desc = 'delete to blackhole register' })
+map('n', 'd', '"_d', { desc = 'delete to blackhole register' })
+map('v', 'd', '"_d', { desc = 'delete to blackhole register' })
+map('n', 'D', '"_D', { desc = 'delete to blackhole register' })
+map('v', 'D', '"_D', { desc = 'delete to blackhole register' })
+map('n', '<c-a>', 'ggVG', { desc = 'select all' })
+
+map('v', '<leader>=', vim.lsp.buf.format, { desc = 'auto format buffer' })
+
+-- [[ Plugin keymaps ]]
+
+-- Markdown Preview
+map('n','<leader>md', ':q<CR>', {})
+
+-- neotree
+map('n', '<leader>e', function()
+  require("neo-tree.command").execute({ toggle = true })
+end, { desc = 'Toggle neotree' })
