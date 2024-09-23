@@ -2,16 +2,28 @@
 -- See `:help vim.opt`
 
 -- disable netrw and intro screen
+vim.g.format_on_save = false
 vim.g.loaded = 1
 vim.g.loaded_netrwPlugin = 1
 vim.opt.shortmess:append { I = true }
 
+-- code folding
+vim.o.foldcolumn = '1'
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+
+-- color scheme
 vim.opt.termguicolors = true
 vim.opt.background = 'dark'
+vim.g.have_nerd_font = true
 
 -- status col
 vim.opt.number = true
 vim.opt.relativenumber = true
+
+-- highlight all search matches
+vim.opt.hlsearch = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -64,7 +76,8 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 -- formatting
-vim.g.format_on_save = false
-vim.opt.tabstop = 4
-vim.opt.expandtab = true
-vim.opt.softtabstop = 4
+vim.g.autoformat = false
+vim.o.tabstop = 4
+vim.o.expandtab = true
+vim.o.softtabstop = 4
+vim.o.shiftwidth = 4

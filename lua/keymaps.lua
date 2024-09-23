@@ -62,13 +62,19 @@ map('v', 'D', '"_D', { desc = 'delete to blackhole register' })
 map('n', '<c-a>', 'ggVG', { desc = 'select all' })
 
 map('v', '<leader>=', vim.lsp.buf.format, { desc = 'auto format buffer' })
+map('n', '<esc>', ':nohl<cr>', { desc = 'clear search highlights' })
 
 -- [[ Plugin keymaps ]]
 
 -- Markdown Preview
-map('n','<leader>md', ':q<CR>', {})
+map('n','<leader>md', ':<c-u>MarkdownPreview<cr>', { desc = 'open md file in browser' })
 
 -- neotree
 map('n', '<leader>e', function()
   require("neo-tree.command").execute({ toggle = true })
 end, { desc = 'Toggle neotree' })
+
+-- kulala
+map('n', '<leader>rr', function() require('kulala').run() end, { desc = 'Run http request' })
+map('n', '<leader>rh', function() require('kulala').toggle_view() end, { desc = 'Toggle body / header' })
+map('n', '<leader>rc', function() require('kulala').close() end, { desc = 'close http request ui' })
